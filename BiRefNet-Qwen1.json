@@ -1,8 +1,8 @@
 {
   "id": "50877312-26f9-41f8-862c-ad74ef7784b4",
   "revision": 0,
-  "last_node_id": 120,
-  "last_link_id": 244,
+  "last_node_id": 125,
+  "last_link_id": 249,
   "nodes": [
     {
       "id": 46,
@@ -1197,14 +1197,14 @@
     },
     {
       "id": 76,
-      "type": "KSampler",
+      "type": "PiDKSamplerCapture",
       "pos": [
         -754.9348078774111,
         -1052.3870674744774
       ],
       "size": [
-        295.54766986187633,
-        748.0567654526387
+        295.5,
+        780
       ],
       "flags": {},
       "order": 21,
@@ -1233,81 +1233,35 @@
           "name": "latent_image",
           "type": "LATENT",
           "link": 112
-        },
-        {
-          "localized_name": "seed",
-          "name": "seed",
-          "type": "INT",
-          "widget": {
-            "name": "seed"
-          },
-          "link": null
-        },
-        {
-          "localized_name": "steps",
-          "name": "steps",
-          "type": "INT",
-          "widget": {
-            "name": "steps"
-          },
-          "link": null
-        },
-        {
-          "localized_name": "cfg",
-          "name": "cfg",
-          "type": "FLOAT",
-          "widget": {
-            "name": "cfg"
-          },
-          "link": null
-        },
-        {
-          "localized_name": "sampler_name",
-          "name": "sampler_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "sampler_name"
-          },
-          "link": null
-        },
-        {
-          "localized_name": "scheduler",
-          "name": "scheduler",
-          "type": "COMBO",
-          "widget": {
-            "name": "scheduler"
-          },
-          "link": null
-        },
-        {
-          "localized_name": "denoise",
-          "name": "denoise",
-          "type": "FLOAT",
-          "widget": {
-            "name": "denoise"
-          },
-          "link": null
         }
       ],
       "outputs": [
         {
-          "localized_name": "LATENT",
-          "name": "LATENT",
+          "localized_name": "final_latent",
+          "name": "final_latent",
           "type": "LATENT",
           "links": [
             114
           ]
+        },
+        {
+          "localized_name": "pid_latent",
+          "name": "pid_latent",
+          "type": "LATENT",
+          "links": [
+            245
+          ]
+        },
+        {
+          "localized_name": "pid_sigma",
+          "name": "pid_sigma",
+          "type": "FLOAT",
+          "links": []
         }
       ],
       "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.5.1",
-        "Node name for S&R": "KSampler",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.4"
-        }
+        "aux_id": "Merserk/ComfyUI-PiD",
+        "Node name for S&R": "PiDKSamplerCapture"
       },
       "widgets_values": [
         1070276334551329,
@@ -1316,7 +1270,9 @@
         1,
         "euler",
         "simple",
-        1
+        1,
+        4,
+        3.0
       ]
     },
     {
@@ -2397,6 +2353,210 @@
         false,
         false
       ]
+    },
+    {
+      "id": 121,
+      "type": "PiDTextPrompt",
+      "pos": [
+        -1120,
+        -1500
+      ],
+      "size": [
+        400,
+        150
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "localized_name": "text",
+          "name": "text",
+          "type": "STRING",
+          "links": []
+        },
+        {
+          "localized_name": "caption",
+          "name": "caption",
+          "type": "STRING",
+          "links": [
+            246
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "Merserk/ComfyUI-PiD",
+        "Node name for S&R": "PiDTextPrompt"
+      },
+      "widgets_values": [
+        "A photorealistic portrait photo of a person, dramatic hard key light from camera-right, bright rim light, deep shadow falloff, detailed skin and fabric texture, sharp focus, rich colors, professional photography, high quality."
+      ]
+    },
+    {
+      "id": 122,
+      "type": "PiDPrepare",
+      "pos": [
+        -660,
+        -1500
+      ],
+      "size": [
+        315,
+        230
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "latent",
+          "name": "latent",
+          "type": "LATENT",
+          "link": 245
+        },
+        {
+          "localized_name": "caption",
+          "name": "caption",
+          "type": "STRING",
+          "link": 246
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "prepared",
+          "name": "prepared",
+          "type": "PID_PREP",
+          "links": [
+            247
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "Merserk/ComfyUI-PiD",
+        "Node name for S&R": "PiDPrepare"
+      },
+      "widgets_values": [
+        "qwenimage-2512",
+        "2kto4k",
+        4,
+        0.0,
+        true,
+        "bf16",
+        true
+      ]
+    },
+    {
+      "id": 123,
+      "type": "PiDSample",
+      "pos": [
+        -300,
+        -1500
+      ],
+      "size": [
+        280,
+        170
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "prepared",
+          "name": "prepared",
+          "type": "PID_PREP",
+          "link": 247
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "sampled",
+          "name": "sampled",
+          "type": "PID_SAMPLES",
+          "links": [
+            248
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "Merserk/ComfyUI-PiD",
+        "Node name for S&R": "PiDSample"
+      },
+      "widgets_values": [
+        4,
+        1.0,
+        0,
+        "randomize",
+        true
+      ]
+    },
+    {
+      "id": 124,
+      "type": "PiDFinalize",
+      "pos": [
+        20,
+        -1500
+      ],
+      "size": [
+        180,
+        50
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "sampled",
+          "name": "sampled",
+          "type": "PID_SAMPLES",
+          "link": 248
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "image",
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            249
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "Merserk/ComfyUI-PiD",
+        "Node name for S&R": "PiDFinalize"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 125,
+      "type": "SaveImage",
+      "pos": [
+        240,
+        -1500
+      ],
+      "size": [
+        315,
+        270
+      ],
+      "flags": {},
+      "order": 41,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 249
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "pid-4x"
+      ]
     }
   ],
   "links": [
@@ -2861,6 +3021,46 @@
       120,
       0,
       107,
+      0,
+      "IMAGE"
+    ],
+    [
+      245,
+      76,
+      1,
+      122,
+      0,
+      "LATENT"
+    ],
+    [
+      246,
+      121,
+      1,
+      122,
+      1,
+      "STRING"
+    ],
+    [
+      247,
+      122,
+      0,
+      123,
+      0,
+      "PID_PREP"
+    ],
+    [
+      248,
+      123,
+      0,
+      124,
+      0,
+      "PID_SAMPLES"
+    ],
+    [
+      249,
+      124,
+      0,
+      125,
       0,
       "IMAGE"
     ]
