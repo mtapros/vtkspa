@@ -17,6 +17,8 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
+from vtkspa.gui_helpers import format_psd_import_summary
+
 PREVIEW_MAX = (520, 520)
 
 
@@ -50,6 +52,7 @@ class App(tk.Tk):
 
         notebook = ttk.Notebook(root)
         notebook.pack(fill=tk.BOTH, expand=True)
+        notebook.add(self._build_import_psd_tab(notebook), text="Import PSD")
         notebook.add(self._build_render_tab(notebook), text="Single Render")
         notebook.add(self._build_batch_tab(notebook), text="Batch Render")
 
@@ -84,6 +87,23 @@ class App(tk.Tk):
         right.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.preview_label = ttk.Label(right, text="(no preview)", anchor=tk.CENTER)
         self.preview_label.pack(fill=tk.BOTH, expand=True)
+        return tab
+
+    def _build_import_psd_tab(self, parent: ttk.Notebook) -> ttk.Frame:
+        tab = ttk.Frame(parent, padding=8)
+        self.import_psd_var = tk.StringVar()
+        self._file_row(tab, "PSD file:", self.import_psd_var, self._pick_import_psd)
+        self.import_output_var = tk.StringVar()
+        self._file_row(tab, "Output dir:", self.import_output_var, self._pick_import_output_dir)
+        ttk.Label(
+            tab,
+            text="Naming: @photo / @photo:slotname → photo slot; @text:fieldname → text slot; everything else → static art.",
+            wraplength=760,
+        ).pack(anchor=tk.W, pady=(6, 0))
+        run_row = ttk.Frame(tab)
+        run_row.pack(fill=tk.X, pady=10)
+        self.import_button = ttk.Button(run_row, text="Import", command=self._do_import_psd)
+        self.import_button.pack(side=tk.LEFT)
         return tab
 
     def _build_batch_tab(self, parent: ttk.Notebook) -> ttk.Frame:
@@ -148,6 +168,19 @@ class App(tk.Tk):
         path = filedialog.askdirectory(title="Select output directory")
         if path:
             self.output_dir_var.set(path)
+
+    def _pick_import_psd(self) -> None:
+        path = filedialog.askopenfilename(
+            title="Select PSD file",
+            filetypes=[("Photoshop", "*.psd *.psb"), ("All files", "*.*")],
+        )
+        if path:
+            self.import_psd_var.set(path)
+
+    def _pick_import_output_dir(self) -> None:
+        path = filedialog.askdirectory(title="Select output template directory")
+        if path:
+            self.import_output_var.set(path)
 
     # ------------------------------------------------------------- logging
     def log(self, message: str) -> None:
@@ -287,6 +320,49 @@ class App(tk.Tk):
             daemon=True,
         )
         thread.start()
+
+    def _do_import_psd(self) -> None:
+        if self._busy:
+            return
+        psd_path = self.import_psd_var.get().strip()
+        output_dir = self.import_output_var.get().strip()
+        if not (psd_path and output_dir):
+            messagebox.showerror("VTK SPA", "Please select a PSD file and output directory.")
+            return
+
+        self._busy = True
+        self.import_button.configure(state=tk.DISABLED)
+        thread = threading.Thread(
+            target=self._import_psd_worker,
+            kwargs={"psd_path": psd_path, "output_dir": output_dir},
+            daemon=True,
+        )
+        thread.start()
+
+    def _import_psd_worker(self, psd_path: str, output_dir: str) -> None:
+        try:
+            from vtkspa.template.psd_importer import import_psd
+
+            report = import_psd(psd_path, output_dir)
+        except Exception as exc:
+            error_message = str(exc)
+            self.log(f"✗ PSD import failed: {exc}")
+            self.after(0, lambda msg=error_message: self._import_psd_finished(error=msg))
+            return
+
+        for line in format_psd_import_summary(report, output_dir):
+            self.log(line)
+        self.log("✓ Template dir auto-filled from import output")
+        self.after(0, lambda out=output_dir: self._import_psd_finished(output_dir=out))
+
+    def _import_psd_finished(self, output_dir: str | None = None, error: str | None = None) -> None:
+        self._busy = False
+        self.import_button.configure(state=tk.NORMAL)
+        if error:
+            messagebox.showerror("VTK SPA", f"PSD import failed:\n{error}")
+            return
+        if output_dir:
+            self.template_var.set(output_dir)
 
     def _step_progress(self) -> None:
         self.after(0, lambda: self.progress.step(1))

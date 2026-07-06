@@ -28,6 +28,7 @@ vtkspa-gui
 
 A basic Tkinter GUI (no extra dependencies; requires `python3-tk` on Debian/Ubuntu):
 - **Template**: pick a template directory and validate it
+- **Import PSD**: pick a PSD/PSB and output directory to create a native template in-app
 - **Single Render**: choose a photo, edit the JSON data fields, preview in-app, and save
 - **Batch Render**: choose a roster CSV, photos directory, and output directory, then run with a progress bar and log
 
@@ -54,6 +55,8 @@ vtkspa batch examples/template \
 ```
 
 ## Import a PSD
+
+You can import from either the GUI (**Import PSD** tab) or CLI.
 
 ```bash
 vtkspa import-psd my_design.psd -o templates/my_template/
