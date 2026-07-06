@@ -18,6 +18,21 @@ pip install vtkspa
 
 ## Quick Start
 
+### GUI
+
+```bash
+vtkspa gui
+# or
+vtkspa-gui
+```
+
+A basic Tkinter GUI (no extra dependencies; requires `python3-tk` on Debian/Ubuntu):
+- **Template**: pick a template directory and validate it
+- **Single Render**: choose a photo, edit the JSON data fields, preview in-app, and save
+- **Batch Render**: choose a roster CSV, photos directory, and output directory, then run with a progress bar and log
+
+### CLI
+
 ```bash
 # Generate example assets
 python examples/generate_example_assets.py

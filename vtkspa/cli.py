@@ -129,6 +129,13 @@ def cmd_batch(args: argparse.Namespace) -> int:
     return 0 if not result.failures else 1
 
 
+def cmd_gui(args: argparse.Namespace) -> int:
+    from vtkspa.gui import main as gui_main
+
+    gui_main()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vtkspa", description="VTK SPA — Photoshop-free Sports Photo Automation")
     parser.add_argument("-v", "--verbose", action="store_true")
@@ -155,6 +162,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_batch.add_argument("--pattern", default="{name_slug}_{template_name}", help="Output filename pattern")
     p_batch.add_argument("--quality", type=int, default=95, help="JPEG quality (1-100)")
     p_batch.add_argument("--column-map", action="append", metavar="CSV_COL=FIELD", help="Map CSV column to data field (repeatable)")
+
+    sub.add_parser("gui", help="Launch the graphical interface")
     return parser
 
 
@@ -168,6 +177,7 @@ def main() -> None:
         "validate": cmd_validate,
         "render": cmd_render,
         "batch": cmd_batch,
+        "gui": cmd_gui,
     }
     fn = dispatch.get(args.command)
     if fn is None:
