@@ -288,6 +288,9 @@ class App(tk.Tk):
         )
         thread.start()
 
+    def _step_progress(self) -> None:
+        self.after(0, lambda: self.progress.step(1))
+
     def _batch_worker(self, template_dir, csv_path, photos_dir, output_dir, quality, pattern) -> None:
         from vtkspa.batch import BatchOptions, run_batch
 
@@ -298,11 +301,11 @@ class App(tk.Tk):
 
         def on_done(index, row, path):
             self.log(f"  [{index + 1}] ✓ {row_name(row, index)!r} → {path}")
-            self.after(0, lambda: self.progress.step(1))
+            self._step_progress()
 
         def on_fail(index, row, exc):
             self.log(f"  [{index + 1}] ✗ {row_name(row, index)!r}: {exc}")
-            self.after(0, lambda: self.progress.step(1))
+            self._step_progress()
 
         self.log(f"Starting batch render...\n  Template: {template_dir}\n  CSV: {csv_path}\n  Photos: {photos_dir}\n  Output: {output_dir}")
         try:
