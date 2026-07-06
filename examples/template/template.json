@@ -1,0 +1,144 @@
+{
+  "schema_version": "vtkspa_v1",
+  "name": "trading_card",
+  "canvas": {
+    "width": 600,
+    "height": 800,
+    "dpi": 300,
+    "background_color": [
+      30,
+      60,
+      120,
+      255
+    ]
+  },
+  "layers": [
+    {
+      "layer_type": "image",
+      "id": "background",
+      "name": "Background",
+      "asset_path": "background.png",
+      "x": 0,
+      "y": 0,
+      "w": 600,
+      "h": 800,
+      "opacity": 1.0,
+      "rotation": 0.0,
+      "visible": true
+    },
+    {
+      "layer_type": "photo_slot",
+      "id": "player_photo",
+      "name": "Player Photo",
+      "x": 50,
+      "y": 50,
+      "w": 500,
+      "h": 550,
+      "fit_mode": "contain",
+      "anchor_h": "center",
+      "anchor_v": "center",
+      "corner_radius": 10,
+      "mask_asset_path": "",
+      "visible": true
+    },
+    {
+      "layer_type": "text_slot",
+      "id": "player_name",
+      "name": "Player Name",
+      "x": 30,
+      "y": 620,
+      "w": 540,
+      "h": 80,
+      "font_family": "DejaVuSans",
+      "font_path": "",
+      "base_font_size": 60,
+      "min_font_size": 18,
+      "fill_color": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "stroke_color": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "stroke_width": 2,
+      "align": "center",
+      "valign": "center",
+      "data_field": "name",
+      "all_caps": true,
+      "max_lines": 1,
+      "sample_text": "PLAYER NAME",
+      "visible": true
+    },
+    {
+      "layer_type": "text_slot",
+      "id": "team_name",
+      "name": "Team Name",
+      "x": 30,
+      "y": 710,
+      "w": 400,
+      "h": 60,
+      "font_family": "DejaVuSans",
+      "font_path": "",
+      "base_font_size": 36,
+      "min_font_size": 12,
+      "fill_color": [
+        255,
+        220,
+        50,
+        255
+      ],
+      "stroke_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stroke_width": 0,
+      "align": "left",
+      "valign": "center",
+      "data_field": "team",
+      "all_caps": false,
+      "max_lines": 1,
+      "sample_text": "Team Name",
+      "visible": true
+    },
+    {
+      "layer_type": "text_slot",
+      "id": "jersey_number",
+      "name": "Jersey Number",
+      "x": 500,
+      "y": 710,
+      "w": 70,
+      "h": 60,
+      "font_family": "DejaVuSans",
+      "font_path": "",
+      "base_font_size": 48,
+      "min_font_size": 20,
+      "fill_color": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "stroke_color": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "stroke_width": 0,
+      "align": "right",
+      "valign": "center",
+      "data_field": "number",
+      "all_caps": false,
+      "max_lines": 1,
+      "sample_text": "00",
+      "visible": true
+    }
+  ]
+}
