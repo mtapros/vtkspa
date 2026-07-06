@@ -332,7 +332,11 @@ class App(tk.Tk):
 
         self._busy = True
         self.import_button.configure(state=tk.DISABLED)
-        thread = threading.Thread(target=self._import_psd_worker, args=(psd_path, output_dir), daemon=True)
+        thread = threading.Thread(
+            target=self._import_psd_worker,
+            kwargs={"psd_path": psd_path, "output_dir": output_dir},
+            daemon=True,
+        )
         thread.start()
 
     def _import_psd_worker(self, psd_path: str, output_dir: str) -> None:
@@ -341,14 +345,15 @@ class App(tk.Tk):
 
             report = import_psd(psd_path, output_dir)
         except Exception as exc:
+            error_message = str(exc)
             self.log(f"✗ PSD import failed: {exc}")
-            self.after(0, lambda err=str(exc): self._import_psd_finished(error=err))
+            self.after(0, lambda msg=error_message: self._import_psd_finished(error=msg))
             return
 
         for line in format_psd_import_summary(report, output_dir):
             self.log(line)
         self.log("✓ Template dir auto-filled from import output")
-        self.after(0, lambda: self._import_psd_finished(output_dir=output_dir))
+        self.after(0, lambda out=output_dir: self._import_psd_finished(output_dir=out))
 
     def _import_psd_finished(self, output_dir: str | None = None, error: str | None = None) -> None:
         self._busy = False
