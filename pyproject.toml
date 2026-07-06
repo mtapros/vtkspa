@@ -16,6 +16,9 @@ dependencies = [
 [project.scripts]
 vtkspa = "vtkspa.cli:main"
 
+[project.gui-scripts]
+vtkspa-gui = "vtkspa.gui:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 
