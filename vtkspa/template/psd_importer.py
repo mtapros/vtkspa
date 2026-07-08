@@ -46,6 +46,22 @@ def _export_layer_pixels(layer: Any) -> bytes | None:
         return None
 
 
+def _get_psd_dpi(psd: Any, default: int = 300) -> int:
+    """Extract the vertical DPI from a PSDImage, falling back to *default*."""
+    try:
+        from psd_tools.constants import Resource
+
+        res = psd.image_resources.get_data(Resource.RESOLUTION_INFO)
+        if res is not None:
+            # res.vertical is a float DPI (e.g. 299.9997...); round to nearest int.
+            dpi = int(round(float(res.vertical)))
+            if dpi > 0:
+                return dpi
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.warning("Could not read PSD resolution info: %s", exc)
+    return default
+
+
 def _get_layer_bbox(layer: Any) -> tuple[int, int, int, int]:
     """Return (x, y, w, h) for a layer."""
     # psd-tools 1.9+ returns bbox as a plain (left, top, right, bottom) tuple.
@@ -80,7 +96,7 @@ def import_psd(psd_path: str | Path, output_dir: str | Path) -> dict[str, Any]:
     canvas = CanvasConfig(
         width=psd.width,
         height=psd.height,
-        dpi=int(getattr(psd.header, "y_density", 300) or 300),
+        dpi=_get_psd_dpi(psd),
         background_color=(255, 255, 255, 255),
     )
 
