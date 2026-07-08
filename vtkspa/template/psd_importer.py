@@ -48,12 +48,9 @@ def _export_layer_pixels(layer: Any) -> bytes | None:
 
 def _get_layer_bbox(layer: Any) -> tuple[int, int, int, int]:
     """Return (x, y, w, h) for a layer."""
-    bbox = layer.bbox
-    x = bbox.x1
-    y = bbox.y1
-    w = bbox.x2 - bbox.x1
-    h = bbox.y2 - bbox.y1
-    return x, y, w, h
+    # psd-tools 1.9+ returns bbox as a plain (left, top, right, bottom) tuple.
+    left, top, right, bottom = layer.bbox
+    return left, top, right - left, bottom - top
 
 
 def import_psd(psd_path: str | Path, output_dir: str | Path) -> dict[str, Any]:
