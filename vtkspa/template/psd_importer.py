@@ -53,6 +53,7 @@ def _get_psd_dpi(psd: Any, default: int = 300) -> int:
 
         res = psd.image_resources.get_data(Resource.RESOLUTION_INFO)
         if res is not None:
+            # res.vertical is a float DPI (e.g. 299.9997...); round to nearest int.
             dpi = int(round(float(res.vertical)))
             if dpi > 0:
                 return dpi
